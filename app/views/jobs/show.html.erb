@@ -1,0 +1,141 @@
+<div class="container">
+
+	<!-- JOB DETAILS -->
+
+	<h3><%= @job.title %></h3>
+	<p><%= @job.status %></p>
+	<p> Due Date: <%= @job.due_date.strftime("%m/%d/%Y") if @job.due_date %> | Tier: <%= @job.tier_requested %> | Word Count: <%=@job.word_count%> <%= "| Per Word: $#{number_with_precision(@job.per_word_charge, :delimiter => ',', :precision => 2)}" if @job.per_word_charge%> <%= "| Total Payment: $#{number_with_precision(@job.total_charge_to_client, :delimiter => ',', :precision => 2)}"%> </p>
+	<p><%= @job.description %></p>
+
+	<!-- CLAIM JOB AS WRITER -->
+
+	<% if @job.status == "Open" && @can_freelancer_see == true %>
+		<% if @current_freelance_viewer %>
+			<h3>Claim Job as Writer</h3>
+			<p> This job pays <%="$#{number_with_precision(@job.total_payment_to_writer, :delimiter => ',', :precision => 2)}"%> (<%="$#{number_with_precision(@job.per_word_payment_to_writer, :delimiter => ',', :precision => 2)} / word"%>)</p>
+			<%= link_to "Claim this job", claim_job_writer_path(job_id: @job.id, freelancer_id: @current_freelance_viewer.id) %>
+		<% end %>
+	<% end %>
+
+	<!-- CLAIM JOB AS EDITOR -->
+
+	<% unless @hired_freelancer == true || @job.editor_id != nil %>
+		<% if @can_freelancer_see == true %>
+			<h3>Claim Job as Editor</h3>
+			<p> This job pays <%="$#{number_with_precision(@job.total_payment_to_editor, :delimiter => ',', :precision => 2)}"%> (<%="$#{number_with_precision(@job.per_word_payment_to_editor, :delimiter => ',', :precision => 2)} / word"%>)</p>
+			<%= link_to "Claim this job", claim_job_editor_path(job_id: @job.id, freelancer_id: @current_freelance_viewer.id) %>
+		<% end %>
+	<% end %>
+
+	<!-- JOB ASSIGNMENTS -->
+	<% if @hired_freelancer == true || @hired_editor == true || @posted_client == true %>
+		<% unless @job.status == "Open" %>
+			<% freelancer = Freelancer.find(@job.freelancer_id) if @job.freelancer_id %>
+			<% if freelancer %>
+				<h3>Assigned Writer</h3>
+				<p><%= "#{freelancer.first_name} #{freelancer.last_name} is working on this" %> </p>
+			<% end %>
+			<% editor = Freelancer.find(@job.editor_id) if @job.editor_id%>
+			<% if editor %>
+				<h3>Assigned Editor</h3>
+				<p><%= "#{editor.first_name} #{editor.last_name} is working on this" if editor %> </p>
+			<% end %>
+		<% end %>
+	<%end %>
+
+	<!-- SUBMISSIONS AND STATUS FOR WRITER, EDITOR  -->
+
+	<% if @hired_freelancer == true || @hired_editor == true %>
+		<hr/>
+			<h3> Submission </h3>
+			<% if Submission.find_by_job_id(@job.id) %>
+				<% submission = Submission.find_by_job_id(@job.id) %>
+				<p><%= link_to "Update Submission", edit_job_submission_path(@job, submission) if @hired_freelancer == true %></p>
+				<p><a href="<%=submission.link%>">View Article</a></p>
+				<p><%=submission.status%></p>
+			<% else %>
+				<%= link_to "Create Submission", new_job_submission_path(@job) if @hired_freelancer == true %>
+			<% end %>
+
+			<h3>Messages</h3>
+			<%= link_to "Post Update", new_job_message_path(@job) %>
+			<% @messages.each do |message| %>
+				<% poster = Freelancer.find(message.freelancer_id) %>
+				<h4><%=message.title%></h4>
+				<p>Posted by <%="#{freelancer.first_name} #{freelancer.last_name}"%> on <%=message.created_at.in_time_zone('Eastern Time (US & Canada)').strftime("%m/%d/%Y at %I:%M%p %Z")%></p>
+				<p><%=message.description%></p>
+				<hr/>
+			<% end %>
+		
+
+	<% end %>
+
+	<!-- EDITOR SCORES WRITER  -->
+
+	<% if @hired_editor == true %>
+		<% if @job.writing_score == nil %>
+			<br/><br/><br/>
+			<form accept-charset="UTF-8" action="/score_writer" method="get">
+			  <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+			  <label for="score">Please select score:</label>
+			  <select name="score">
+				  <option value="1">1 (Terrible)</option>
+				  <option value="2">2</option>
+				  <option value="3">3</option>
+				  <option value="4">4</option>
+				  <option value="5">5</option>
+				  <option value="6">6</option>
+				  <option value="7">7</option>
+				  <option value="8">8</option>
+				  <option value="9">9</option>
+				  <option value="10">10 (Amazing)</option>
+			  </select>
+
+			  <input type="hidden" name="job_id" value="<%=@job.id%>">
+			  <input type="hidden" name="writer_id" value="<%=@freelancer.id%>"><br/>
+			  <input name="commit" type="submit" value="Submit" />
+			</form>
+		<% end %>
+	<% end %>
+
+	<!-- PROJECT STATUS FOR CLIENT -->
+	<% if @posted_client == true && @job.status == "Client Review" %>
+
+		<h3> Final Article </h3>
+		<% if Submission.find_by_job_id(@job.id) %>
+			<% submission = Submission.find_by_job_id(@job.id) %>
+			<p><a href="<%=submission.link%>">View Article</a></p>
+		<% end %>
+
+		<% if @job.editing_score == nil %>
+			<br/><br/><br/>
+			<form accept-charset="UTF-8" action="/score_editor" method="get">
+			  <div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+			  <label for="score">Please select score:</label>
+			  <select name="score">
+				  <option value="1">1 (Terrible)</option>
+				  <option value="2">2</option>
+				  <option value="3">3</option>
+				  <option value="4">4</option>
+				  <option value="5">5</option>
+				  <option value="6">6</option>
+				  <option value="7">7</option>
+				  <option value="8">8</option>
+				  <option value="9">9</option>
+				  <option value="10">10 (Amazing)</option>
+			  </select>
+
+			  <input type="hidden" name="job_id" value="<%=@job.id%>">
+			  <input type="hidden" name="editor_id" value="<%=@editor.id%>"><br/>
+			  <input name="commit" type="submit" value="Submit" />
+			</form>
+		<% end %>
+
+
+
+	<% end %>
+
+	<br/><br/>
+
+
+</div>

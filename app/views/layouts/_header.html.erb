@@ -1,0 +1,47 @@
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">TC Writers</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/jobs">Jobs</a></li>
+        <li><a href="/freelancers">Freelancers</a></li>
+        <li><a href="/clients">Employers</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">User <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <% if current_user %>
+              <% if current_user.user_type == "Employer" %>
+                <% client = Client.find_by_user_id(current_user.id) %>
+                <li><%= link_to('View Profile', client_path(client))  if client%> </li>
+                <li><%= link_to('Edit Profile', edit_client_path(client)) if client %> </li>
+              <% elsif current_user.user_type == "Freelancer" %>
+                <% freelancer = Freelancer.find_by_user_id(current_user.id) %>
+                <li><%= link_to('View Profile', freelancer_path(freelancer)) %> </li>
+                <li><%= link_to('Edit Profile', edit_freelancer_path(freelancer)) %> </li>
+              <% end %>
+              <li><%= link_to('Logout', destroy_user_session_path, :method => :delete) %> </li>
+            <% else %>
+            <li><%= link_to "Sign In", new_user_session_path %></li>
+            <li><%= link_to "Sign Up", new_user_registration_path %></li>
+            <% end %>
+          </ul>
+        </li>
+
+
+      </ul>
+
+      
+    </div><!--/.nav-collapse -->
+  </div>
+</div>

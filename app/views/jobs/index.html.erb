@@ -1,0 +1,59 @@
+<div class="container">
+	<br/>
+	<%= link_to "New Job", new_job_path %><br/><br/>
+
+	<ul class="nav nav-tabs">
+	  <li class="active"><a href="#write" data-toggle="tab">Writing</a></li>
+	  <li><a href="#edit" data-toggle="tab">Editing</a></li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+	  <div class="tab-pane active" id="write">
+	  	<br/>
+	  	<table class="table table-striped">
+	  		<tr>
+	  			<th>Title</th>
+	  			<th>Level</th>
+	  			<th>Due Date</th>
+	  			<th>Payment</th>
+	  		</tr>
+	  	  <% @jobs.each do |job| %>
+	  	  	<tr>
+	  	  		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	  		<td><%= link_to job.tier_requested, job_path(job) if job.tier_requested %><br/></td>
+	  	  		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	  		<td><%= link_to "$#{number_with_precision(job.total_payment_to_writer, :delimiter => ',', :precision => 2)} ($#{number_with_precision(job.per_word_payment_to_writer, :delimiter => ',', :precision => 2)} / word)", job_path(job) if job.per_word_payment_to_writer %><br/></td>
+	  	  	<tr>
+	  	  <% end %>
+	  	</table>
+	  </div>
+	  <div class="tab-pane" id="edit">
+	  	<br/>
+	  	<table class="table table-striped">
+	  		<tr>
+	  			<th>Title</th>
+	  			<th>Level</th>
+	  			<th>Due Date</th>
+	  			<th>Payment</th>
+	  		</tr>
+	  	  <% @edit_jobs.each do |job| %>
+	  	  	<tr>
+	  	  		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	  		<td><%= link_to job.tier_requested, job_path(job) if job.tier_requested %><br/></td>
+	  	  		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	  		<td><%= link_to "$#{number_with_precision(job.total_payment_to_editor, :delimiter => ',', :precision => 2)} ($#{number_with_precision(job.per_word_payment_to_editor, :delimiter => ',', :precision => 2)} / word)", job_path(job) if job.per_word_payment_to_editor %><br/></td>
+	  	  	<tr>
+	  	  <% end %>
+	  	</table>
+	  </div>
+
+	</div>
+
+
+
+
+
+
+	
+</div>

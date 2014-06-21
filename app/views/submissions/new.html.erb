@@ -1,0 +1,14 @@
+<br/><br/>
+<div class="container">
+  <%= form_for [@job, @submission] do |f| %>
+     <div class="form-group">
+       <%= f.label :link %><br/>
+       <%= f.text_field :link %>
+    </div>
+
+   
+
+
+    <%= f.submit 'Submit', :class => "btn btn-success" %>
+  <% end %>
+</div>

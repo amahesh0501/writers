@@ -1,0 +1,12 @@
+<div class="container">
+	<br/>
+
+	<table class="table table-striped">
+	  <% @clients.each do |client| %>
+	  	<tr>
+	  		<td><%= link_to "#{client.name}", client_path(client) %><br/></td>
+	  	<tr>
+	  <% end %>
+	</table>
+	
+</div>

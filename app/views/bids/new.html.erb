@@ -1,0 +1,14 @@
+<br/><br/>
+<div class="container">
+  <%= form_for [@job, @bid] do |f| %>
+     <div class="form-group">
+       <%= f.label :amount %><br/>
+       <%= f.text_field :amount %>
+    </div>
+   
+
+
+    <%= f.submit 'Submit', :class => "btn btn-success" %>
+  <% end %>
+</div>
+

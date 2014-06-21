@@ -1,0 +1,85 @@
+<div class="container">
+	<h3><%= @freelancer.first_name %> <%= @freelancer.last_name %></h3>
+	<p>Level: <%= @freelancer.level %> | Score: <%= @freelancer.rating %> </p>
+
+	<ul class="nav nav-tabs">
+	  <li class="active"><a href="#current" data-toggle="tab">Current Jobs</a></li>
+	  <li><a href="#completed" data-toggle="tab">Completed Jobs</a></li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+	  <div class="tab-pane active" id="current">
+	  	<table class="table table-striped">
+	  		<br/>
+	  		<tr>
+	  			<th>Title</th>
+	  			<th>Payment</th>
+	  			<th>Due Date</th>
+	  		</tr>
+	  	  <% @current_jobs.each do |job| %>
+	  	  	<tr>
+	  	  		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	  		<td><%= link_to "$#{number_with_precision(job.total_payment_to_writer, :delimiter => ',', :precision => 2)}", job_path(job) if job.total_payment_to_writer %><br/></td>
+	  	  		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	  	<tr>
+	  	  <% end %>
+	  	</table>
+
+	  	<hr/>editing<br/>
+
+	  	<table class="table table-striped">
+	  		<br/>
+	  		<tr>
+	  			<th>Title</th>
+	  			<th>Payment</th>
+	  			<th>Due Date</th>
+	  		</tr>
+	  	  <% @current_editor_jobs.each do |job| %>
+	  	  	<tr>
+	  	  		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	  		<td><%= link_to "$#{number_with_precision(job.total_payment_to_editor, :delimiter => ',', :precision => 2)}", job_path(job) if job.total_payment_to_editor %><br/></td>
+	  	  		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	  	<tr>
+	  	  <% end %>
+	  	</table>
+	  </div>
+
+	  <div class="tab-pane" id="completed">
+	  	<br/>
+	  	<table class="table table-striped">
+	  		<tr>
+	  			<th>Title</th>
+	  			<th>Payment</th>
+	  			<th>Due Date</th>
+	  		</tr>
+	  	  <% @past_jobs.each do |job| %>
+	  	  	<tr>
+	  	  		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	  		<td><%= link_to "$#{number_with_precision(job.total_payment_to_writer, :delimiter => ',', :precision => 2)}", job_path(job) if job.total_payment_to_writer %><br/></td>
+	  	  		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	  	<tr>
+	  	  <% end %>
+	  	 </table>
+
+	  	 <hr/>editing<br/>
+
+	  	 <table class="table table-striped">
+	  	 	<br/>
+	  	 	<tr>
+	  	 		<th>Title</th>
+	  	 		<th>Payment</th>
+	  	 		<th>Due Date</th>
+	  	 	</tr>
+	  	   <% @past_editor_jobs.each do |job| %>
+	  	   	<tr>
+	  	   		<td><%= link_to job.title, job_path(job) %><br/></td>
+	  	   		<td><%= link_to "$#{number_with_precision(job.total_payment_to_editor, :delimiter => ',', :precision => 2)}", job_path(job) if job.total_payment_to_editor %><br/></td>
+	  	   		<td><%= link_to job.due_date.strftime("%m/%d/%Y"), job_path(job) if job.due_date %><br/></td>
+	  	   	<tr>
+	  	   <% end %>
+	  	 </table>
+	  </div>
+
+	</div>
+</div>
